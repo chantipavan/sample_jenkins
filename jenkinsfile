@@ -1,0 +1,37 @@
+
+node {
+   def mvnHome
+   stage('Git Clone') { // for display purposes
+      // Get some code from a GitHub repository
+        git 'https://github.com/chantipavan/sample_jenkins'
+      // Get the Maven tool.
+      // ** NOTE: This 'M3' Maven tool must be configured
+      // **       in the global configuration.           
+      mvnHome = tool 'm1'
+   }
+   stage('Build') {
+        sh "mvn clean package"
+   }
+   stage('Archive War') {
+      archive 'target/*.war'
+   }
+   stage('Build Docker Image') {
+        sh "docker build . -t chantipavan9/pubg_world:$BUILD_NUMBER"
+   }
+   stage('Create latest Tag') {
+        sh "docker tag chantipavan9/pubg_world:$BUILD_NUMBE chantipavan9/pubg_world:latest"
+   }
+   stage('Push Images to Docker Hub') {
+        sh "docker login -u chantipavan9 -p $dockerhub && docker push chantipavan9/pubg_world:$BUILD_NUMBER && docker push chantipavan9/pubg_world:latest"
+   }
+   stage('Cleanup containers') {
+        sh "docker stop spark && docker rm spark"
+   }
+   stage('Deploy the latest Image'){
+       sh "docker run -d --name myjenkins -p 8125:8080 chantipavan9/pubg_world:latest"
+   }
+   stage('Cleanup Image') {
+        sh "docker rmi chantipavan9/pubg_world:$BUILD_NUMBER"
+   }
+}
+
