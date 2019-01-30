@@ -19,7 +19,7 @@ node {
         sh "docker build . -t chantipavan9/pubg_world:$BUILD_NUMBER"
    }
    stage('Create latest Tag') {
-        sh "docker tag chantipavan9/pubg_world:$BUILD_NUMBE chantipavan9/pubg_world:latest"
+        sh "docker tag chantipavan9/pubg_world:$BUILD_NUMBER chantipavan9/pubg_world:latest"
    }
    stage('Push Images to Docker Hub') {
         sh "docker login -u chantipavan9 -p $dockerhub && docker push chantipavan9/pubg_world:$BUILD_NUMBER && docker push chantipavan9/pubg_world:latest"
