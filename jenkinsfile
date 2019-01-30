@@ -25,10 +25,10 @@ node {
         sh "docker login -u chantipavan9 -p $dockerhub && docker push chantipavan9/pubg_world:$BUILD_NUMBER && docker push chantipavan9/pubg_world:latest"
    }
    stage('Cleanup containers') {
-        sh "docker stop myjenkins && docker rm  myjenkins"
+        sh "docker stop  mypubgworld && docker rm   mypubgworld"
    }
    stage('Deploy the latest Image'){
-       sh "docker run -d --name mypubgworld -p 8125:8080 chantipavan9/pubg_world:latest"
+       sh "docker run -d --name mypubg -p 8125:8080 chantipavan9/pubg_world:latest"
    }
    stage('Cleanup Image') {
         sh "docker rmi chantipavan9/pubg_world:$BUILD_NUMBER"
